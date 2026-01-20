@@ -1,18 +1,18 @@
 import './style.css'
-import { grid, type Peg, activeRowIndex, setActiveRowIndex } from './game'
+import { grid, type HoleState, type Marble, activeRowIndex, setActiveRowIndex } from './game'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
 // Track selected color
-let selectedColor: Peg = 'Red'
+let selectedColor: Marble = 'Red'
 
-const availableColors: Peg[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple']
+const availableColors: Marble[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple']
 
 // Track which rows have been checked
 const checkedRows = new Set<number>()
 
-function getPegColor(peg: Peg): string {
-  const colorMap: Record<Peg, string> = {
+function getHoleColor(holeState: HoleState): string {
+  const colorMap: Record<HoleState, string> = {
     'None': '#3a3a3a',
     'Red': '#ef5350',
     'Blue': '#42a5f5',
@@ -23,10 +23,10 @@ function getPegColor(peg: Peg): string {
     'Black': '#424242',
     'Purple': '#ab47bc'
   }
-  return colorMap[peg]
+  return colorMap[holeState]
 }
 
-function renderPalette(container: HTMLElement) {
+function buildPalette(container: HTMLElement) {
   const paletteContainer = document.createElement('div')
   paletteContainer.className = 'palette-container'
 
@@ -45,7 +45,7 @@ function renderPalette(container: HTMLElement) {
     if (color === selectedColor) {
       palettePeg.classList.add('selected')
     }
-    palettePeg.style.backgroundColor = getPegColor(color)
+    palettePeg.style.backgroundColor = getHoleColor(color)
     palettePeg.addEventListener('click', () => {
       handlePaletteClick(color)
     })
@@ -57,7 +57,7 @@ function renderPalette(container: HTMLElement) {
   container.appendChild(paletteContainer)
 }
 
-function handlePaletteClick(color: Peg) {
+function handlePaletteClick(color: Marble) {
   // Update selected color
   const previousColor = selectedColor
   selectedColor = color
@@ -77,7 +77,7 @@ function handlePaletteClick(color: Peg) {
   }
 }
 
-function renderGrid(container: HTMLElement) {
+function buildGrid(container: HTMLElement) {
   const gameBoard = document.createElement('div')
   gameBoard.className = 'game-board'
 
@@ -101,11 +101,13 @@ function renderGrid(container: HTMLElement) {
       pegElement.dataset.y = String(y)
 
       const pegValue = grid.get(x, y)
-      pegElement.style.backgroundColor = getPegColor(pegValue)
+      pegElement.style.backgroundColor = getHoleColor(pegValue)
 
-      // Add empty class for visual distinction
+      // Add empty class for visual distinction, or placed class if it has a marble
       if (pegValue === 'None') {
         pegElement.classList.add('empty')
+      } else {
+        pegElement.classList.add('placed')
       }
 
       // Add inactive class if not in active row
@@ -170,12 +172,13 @@ function handlePegClick(x: number, y: number, pegElement: HTMLElement) {
   grid.set(x, y, selectedColor)
 
   // Update DOM directly
-  pegElement.style.backgroundColor = getPegColor(selectedColor)
+  pegElement.style.backgroundColor = getHoleColor(selectedColor)
 
-  // Remove empty class if it was empty
+  // Remove empty class and add placed class
   if (pegElement.classList.contains('empty')) {
     pegElement.classList.remove('empty')
   }
+  pegElement.classList.add('placed')
 }
 
 function renderFeedback(feedbackArea: HTMLElement, _rowIndex: number) {
@@ -275,12 +278,12 @@ function animateRowTransition(currentRowIndex: number, nextRowIndex: number) {
   }, 200)
 }
 
-function renderApp() {
+function buildApp() {
   const mainContainer = document.createElement('div')
   mainContainer.className = 'main-container'
 
-  renderGrid(mainContainer)
-  renderPalette(mainContainer)
+  buildGrid(mainContainer)
+  buildPalette(mainContainer)
 
   app.appendChild(mainContainer)
 }
@@ -292,4 +295,4 @@ for (let y = 0; y < grid.height; y++) {
   }
 }
 
-renderApp()
+buildApp()
