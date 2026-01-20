@@ -11,6 +11,19 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /*
+   * Base unit calculated from viewport height
+   * Total height needed: 10 rows + 2 palette rows + gaps + padding
+   * Approximate: 14 units of peg height needed
+   */
+  --base-unit: min(6vh, 8vw, 60px);
+  --peg-size: var(--base-unit);
+  --palette-peg-size: calc(var(--base-unit) * 0.85);
+  --gap: calc(var(--base-unit) * 0.2);
+  --padding: calc(var(--base-unit) * 0.3);
+  --border-radius: calc(var(--base-unit) * 0.15);
+  --check-width: calc(var(--base-unit) * 2);
 }
 
 * {
@@ -19,52 +32,59 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: var(--padding);
 }
 
 .main-container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--gap);
   align-items: center;
+  max-height: 100%;
 }
 
 .game-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--gap);
   align-items: center;
 }
 
 .game-board {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
+  gap: var(--gap);
+  padding: var(--padding);
   background-color: #1a1a1a;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .row-container {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  gap: var(--gap);
+  padding: calc(var(--gap) * 0.5) var(--gap);
+  border-radius: var(--border-radius);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -75,7 +95,7 @@ body {
 
 .peg-row {
   display: flex;
-  gap: 12px;
+  gap: var(--gap);
 }
 
 /* Shared marble styling */
@@ -83,13 +103,15 @@ body {
 .palette-peg {
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   border: none;
   position: relative;
   box-shadow: inset -4px -4px 12px rgba(0, 0, 0, 0.4),
               inset 4px 4px 12px rgba(255, 255, 255, 0.2),
               0 4px 8px rgba(0, 0, 0, 0.4),
               0 1px 2px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .peg::before,
@@ -109,8 +131,8 @@ body {
 }
 
 .peg {
-  width: 60px;
-  height: 60px;
+  width: var(--peg-size);
+  height: var(--peg-size);
 }
 
 .peg:hover {
@@ -191,24 +213,20 @@ body {
   filter: blur(2px);
 }
 
-/* Clear board animation - duplicate marble disappears */
+/* Clear board animation */
 @keyframes clearOut {
   0% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-  30% {
-    transform: scale(0.85) translateY(-15px);
+    transform: scale(1);
     opacity: 1;
   }
   100% {
-    transform: scale(0.15) translateY(70px);
+    transform: scale(0);
     opacity: 0;
   }
 }
 
 .peg-duplicate.clear-out {
-  animation: clearOut 0.5s ease-in forwards;
+  animation: clearOut 0.4s ease-out forwards;
 }
 
 .row-container.clearing {
@@ -217,30 +235,31 @@ body {
 
 .check-wrapper {
   position: relative;
-  width: 130px;
-  height: 60px;
+  width: var(--check-width);
+  height: var(--peg-size);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .check-button {
   position: absolute;
-  padding: 12px 24px;
-  width: 130px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: var(--border-radius);
+  font-size: calc(var(--base-unit) * 0.28);
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.3s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   opacity: 1;
   z-index: 2;
-  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .check-button:hover {
@@ -250,7 +269,7 @@ body {
 }
 
 .check-button:active {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
 }
 
 .check-button.hidden {
@@ -260,15 +279,14 @@ body {
 
 .feedback-area {
   position: absolute;
-  width: 130px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
   opacity: 0;
-  padding: 8px;
+  padding: calc(var(--gap) * 0.5);
   background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: opacity 0.3s ease 0.2s;
   z-index: 1;
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,7 +298,7 @@ body {
 
 .feedback-grid {
   display: grid;
-  gap: 4px;
+  gap: 2px;
   width: 100%;
   height: 100%;
 }
@@ -288,12 +306,12 @@ body {
 .feedback-peg {
   width: 100%;
   aspect-ratio: 1;
-  max-width: 24px;
-  max-height: 24px;
   border-radius: 50%;
   border: none;
   position: relative;
-  box-sizing: border-box;
+  margin: auto;
+  max-width: calc(var(--peg-size) * 0.4);
+  max-height: calc(var(--peg-size) * 0.4);
 }
 
 /* Filled feedback pegs (red/white marbles) */
@@ -332,12 +350,12 @@ body {
 .palette-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: calc(var(--gap) * 0.5);
   align-items: center;
 }
 
 .palette-title {
-  font-size: 18px;
+  font-size: calc(var(--base-unit) * 0.3);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
 }
@@ -345,16 +363,16 @@ body {
 .palette {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  padding: 16px;
+  gap: var(--gap);
+  padding: var(--padding);
   background-color: #1a1a1a;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .palette-peg {
-  width: 50px;
-  height: 50px;
+  width: var(--palette-peg-size);
+  height: var(--palette-peg-size);
 }
 
 .palette-peg:hover {
@@ -391,6 +409,7 @@ body {
   z-index: 1000;
   opacity: 0;
   transition: opacity 0.3s ease;
+  padding: var(--padding);
 }
 
 .victory-overlay.visible {
@@ -399,11 +418,12 @@ body {
 
 .victory-dialog {
   background-color: #1a1a1a;
-  border-radius: 16px;
-  padding: 40px;
+  border-radius: calc(var(--border-radius) * 2);
+  padding: calc(var(--base-unit) * 0.6);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   text-align: center;
-  min-width: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
   animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -419,36 +439,37 @@ body {
 }
 
 .victory-title {
-  font-size: 48px;
+  font-size: calc(var(--base-unit) * 0.7);
   font-weight: 700;
-  margin: 0 0 16px 0;
+  margin: 0 0 calc(var(--gap) * 1.5) 0;
   color: #ffd700;
   text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
 .victory-message {
-  font-size: 24px;
+  font-size: calc(var(--base-unit) * 0.35);
   color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 16px 0;
+  margin: 0 0 calc(var(--gap) * 1.5) 0;
 }
 
 .victory-stats {
-  font-size: 20px;
+  font-size: calc(var(--base-unit) * 0.3);
   color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 32px 0;
+  margin: 0 0 calc(var(--gap) * 2) 0;
   font-weight: 500;
 }
 
 .victory-solution {
   display: flex;
-  gap: 12px;
+  gap: var(--gap);
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: calc(var(--gap) * 2);
+  flex-wrap: wrap;
 }
 
 .victory-marble {
-  width: 60px;
-  height: 60px;
+  width: var(--peg-size);
+  height: var(--peg-size);
   border-radius: 50%;
   position: relative;
   box-shadow: inset -4px -4px 12px rgba(0, 0, 0, 0.4),
@@ -473,16 +494,17 @@ body {
 }
 
 .play-again-button {
-  padding: 16px 32px;
+  padding: calc(var(--base-unit) * 0.25) calc(var(--base-unit) * 0.5);
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 18px;
+  border-radius: var(--border-radius);
+  font-size: calc(var(--base-unit) * 0.3);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
 }
 
 .play-again-button:hover {
@@ -508,14 +530,14 @@ body {
 
 /* Restart Button */
 .restart-button {
-  width: 48px;
-  height: 48px;
+  width: calc(var(--base-unit) * 0.8);
+  height: calc(var(--base-unit) * 0.8);
   padding: 0;
   background-color: #ff9800;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 28px;
+  border-radius: var(--border-radius);
+  font-size: calc(var(--base-unit) * 0.5);
   font-weight: 400;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
@@ -524,6 +546,7 @@ body {
   align-items: center;
   justify-content: center;
   line-height: 1;
+  touch-action: manipulation;
 }
 
 .restart-button:hover {
@@ -550,20 +573,22 @@ body {
 /* Dialog Buttons */
 .dialog-buttons {
   display: flex;
-  gap: 16px;
+  gap: var(--gap);
   justify-content: center;
-  margin-top: 24px;
+  margin-top: calc(var(--gap) * 1.5);
+  flex-wrap: wrap;
 }
 
 .dialog-button {
-  padding: 12px 32px;
+  padding: calc(var(--base-unit) * 0.2) calc(var(--base-unit) * 0.5);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: var(--border-radius);
+  font-size: calc(var(--base-unit) * 0.28);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
 }
 
 .cancel-button {
@@ -591,4 +616,25 @@ body {
 .dialog-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .peg:hover,
+  .palette-peg:hover,
+  .check-button:hover,
+  .restart-button:hover {
+    transform: none;
+  }
+
+  .peg:hover {
+    box-shadow: inset -4px -4px 12px rgba(0, 0, 0, 0.4),
+                inset 4px 4px 12px rgba(255, 255, 255, 0.2),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .restart-button:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
 }
