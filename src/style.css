@@ -641,7 +641,6 @@ body::before {
 }
 
 .palette-peg.selected {
-  transform: scale(1.1);
   box-shadow:
     inset -4px -4px 10px rgba(0, 0, 0, 0.4),
     inset 4px 4px 10px rgba(255, 255, 255, 0.2),
@@ -650,26 +649,15 @@ body::before {
     0 0 60px rgba(0, 212, 255, 0.3),
     0 4px 12px rgba(0, 0, 0, 0.5);
   animation: selectedPulse 2s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes selectedPulse {
   0%, 100% {
-    box-shadow:
-      inset -4px -4px 10px rgba(0, 0, 0, 0.4),
-      inset 4px 4px 10px rgba(255, 255, 255, 0.2),
-      0 0 0 3px var(--accent-cyan),
-      0 0 30px var(--neon-glow),
-      0 0 60px rgba(0, 212, 255, 0.3),
-      0 4px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
   }
   50% {
-    box-shadow:
-      inset -4px -4px 10px rgba(0, 0, 0, 0.4),
-      inset 4px 4px 10px rgba(255, 255, 255, 0.2),
-      0 0 0 3px var(--accent-cyan),
-      0 0 40px var(--neon-glow),
-      0 0 80px rgba(0, 212, 255, 0.4),
-      0 4px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.18);
   }
 }
 
