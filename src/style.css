@@ -199,12 +199,11 @@ body::before {
   width: 45%;
   height: 35%;
   background: radial-gradient(ellipse at 30% 30%,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.5) 20%,
-    rgba(255, 255, 255, 0.2) 40%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.4) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 75%);
   border-radius: 50%;
-  filter: blur(1px);
   z-index: 2;
 }
 
@@ -218,10 +217,9 @@ body::before {
   width: 25%;
   height: 15%;
   background: radial-gradient(ellipse,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 80%);
   border-radius: 50%;
-  filter: blur(2px);
   z-index: 2;
 }
 
@@ -350,12 +348,11 @@ body::before {
   width: 45%;
   height: 35%;
   background: radial-gradient(ellipse at 30% 30%,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.5) 20%,
-    rgba(255, 255, 255, 0.2) 40%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.4) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 75%);
   border-radius: 50%;
-  filter: blur(1px);
 }
 
 .peg-duplicate.filled::after {
@@ -366,10 +363,9 @@ body::before {
   width: 25%;
   height: 15%;
   background: radial-gradient(ellipse,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 80%);
   border-radius: 50%;
-  filter: blur(2px);
 }
 
 /* Clear board animation */
@@ -533,11 +529,10 @@ body::before {
   width: 40%;
   height: 30%;
   background: radial-gradient(circle at 30% 30%,
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0.4) 30%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.3) 35%,
+    transparent 75%);
   border-radius: 50%;
-  filter: blur(1px);
 }
 
 /* Empty feedback pegs (dark recessed holes) */
@@ -789,12 +784,11 @@ body::before {
   width: 45%;
   height: 35%;
   background: radial-gradient(ellipse at 30% 30%,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.5) 20%,
-    rgba(255, 255, 255, 0.2) 40%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.4) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 75%);
   border-radius: 50%;
-  filter: blur(1px);
 }
 
 .victory-marble::after {
@@ -805,10 +799,9 @@ body::before {
   width: 25%;
   height: 15%;
   background: radial-gradient(ellipse,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%);
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 80%);
   border-radius: 50%;
-  filter: blur(2px);
 }
 
 .play-again-button {
