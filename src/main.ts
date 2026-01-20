@@ -3,9 +3,14 @@ import { grid, type Peg } from './game'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
+// Track selected color
+let selectedColor: Peg = 'Red'
+
+const availableColors: Peg[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple']
+
 function getPegColor(peg: Peg): string {
   const colorMap: Record<Peg, string> = {
-    'None': '#e0e0e0',
+    'None': '#3a3a3a',
     'Red': '#ef5350',
     'Blue': '#42a5f5',
     'Yellow': '#ffeb3b',
@@ -18,9 +23,38 @@ function getPegColor(peg: Peg): string {
   return colorMap[peg]
 }
 
-function renderGrid(container: HTMLElement) {
-  container.innerHTML = ''
+function renderPalette(container: HTMLElement) {
+  const paletteContainer = document.createElement('div')
+  paletteContainer.className = 'palette-container'
 
+  const paletteTitle = document.createElement('div')
+  paletteTitle.className = 'palette-title'
+  paletteTitle.textContent = 'Select Color:'
+  paletteContainer.appendChild(paletteTitle)
+
+  const palette = document.createElement('div')
+  palette.className = 'palette'
+
+  availableColors.forEach(color => {
+    const palettePeg = document.createElement('div')
+    palettePeg.className = 'palette-peg'
+    if (color === selectedColor) {
+      palettePeg.classList.add('selected')
+    }
+    palettePeg.style.backgroundColor = getPegColor(color)
+    palettePeg.addEventListener('click', () => {
+      selectedColor = color
+      renderApp()
+    })
+
+    palette.appendChild(palettePeg)
+  })
+
+  paletteContainer.appendChild(palette)
+  container.appendChild(paletteContainer)
+}
+
+function renderGrid(container: HTMLElement) {
   const gameBoard = document.createElement('div')
   gameBoard.className = 'game-board'
 
@@ -40,6 +74,11 @@ function renderGrid(container: HTMLElement) {
 
       const pegValue = grid.get(x, y)
       pegElement.style.backgroundColor = getPegColor(pegValue)
+
+      // Add empty class for visual distinction
+      if (pegValue === 'None') {
+        pegElement.classList.add('empty')
+      }
 
       // Add click handler for interactivity
       pegElement.addEventListener('click', () => {
@@ -78,14 +117,8 @@ function renderGrid(container: HTMLElement) {
 }
 
 function handlePegClick(x: number, y: number) {
-  // Cycle through colors for now (you can customize this logic)
-  const colors: Peg[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple', 'None']
-  const currentPeg = grid.get(x, y)
-  const currentIndex = colors.indexOf(currentPeg)
-  const nextPeg = colors[(currentIndex + 1) % colors.length]
-
-  grid.set(x, y, nextPeg)
-  renderGrid(app)
+  grid.set(x, y, selectedColor)
+  renderApp()
 }
 
 function handleCheckRow(_rowIndex: number, checkButton: HTMLButtonElement, feedbackArea: HTMLElement) {
@@ -123,6 +156,18 @@ function handleCheckRow(_rowIndex: number, checkButton: HTMLButtonElement, feedb
   feedbackArea.classList.add('visible')
 }
 
+function renderApp() {
+  app.innerHTML = ''
+
+  const mainContainer = document.createElement('div')
+  mainContainer.className = 'main-container'
+
+  renderGrid(mainContainer)
+  renderPalette(mainContainer)
+
+  app.appendChild(mainContainer)
+}
+
 // Initialize with empty grid
 for (let y = 0; y < grid.height; y++) {
   for (let x = 0; x < grid.width; x++) {
@@ -130,4 +175,4 @@ for (let y = 0; y < grid.height; y++) {
   }
 }
 
-renderGrid(app)
+renderApp()
