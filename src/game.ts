@@ -7,7 +7,7 @@ export const availableColors: Marble[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pin
 export let activeRowIndex: number = 5;
 export let solution: Marble[] = []
 
-export const grid : Grid<HoleState> = new ArrayGrid(4, 9);
+export const grid : Grid<HoleState> = new ArrayGrid(4, 10);
 
 export function setActiveRowIndex(index: number) {
   activeRowIndex = index;

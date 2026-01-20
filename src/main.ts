@@ -268,9 +268,24 @@ function handleCheckRow(rowIndex: number, checkButton: HTMLButtonElement, feedba
   // Hide the button with transition
   checkButton.classList.add('hidden')
 
+  // Get the current row's guesses
+  const guess: HoleState[] = []
+  for (let x = 0; x < grid.width; x++) {
+    guess.push(grid.get(x, rowIndex))
+  }
+
+  // Calculate feedback
+  const feedback = calculateFeedback(guess)
+
   // Render the feedback
   renderFeedback(feedbackArea, rowIndex)
   feedbackArea.classList.add('visible')
+
+  // Check for victory
+  if (feedback.exactMatches === grid.width) {
+    showVictoryDialog()
+    return
+  }
 
   // Move to the next row (going upward, from bottom to top)
   if (rowIndex > 0) {
@@ -337,6 +352,57 @@ function buildApp() {
   app.appendChild(mainContainer)
 }
 
+function showVictoryDialog() {
+  // Create overlay
+  const overlay = document.createElement('div')
+  overlay.className = 'victory-overlay'
+
+  // Create dialog
+  const dialog = document.createElement('div')
+  dialog.className = 'victory-dialog'
+
+  // Title
+  const title = document.createElement('h2')
+  title.textContent = '🎉 Victory! 🎉'
+  title.className = 'victory-title'
+
+  // Message
+  const message = document.createElement('p')
+  message.textContent = 'You cracked the code!'
+  message.className = 'victory-message'
+
+  // Solution display
+  const solutionContainer = document.createElement('div')
+  solutionContainer.className = 'victory-solution'
+  solution.forEach(color => {
+    const marble = document.createElement('div')
+    marble.className = 'victory-marble'
+    marble.style.backgroundColor = getHoleColor(color)
+    solutionContainer.appendChild(marble)
+  })
+
+  // Play again button
+  const playAgainBtn = document.createElement('button')
+  playAgainBtn.textContent = 'Play Again'
+  playAgainBtn.className = 'play-again-button'
+  playAgainBtn.addEventListener('click', () => {
+    overlay.remove()
+    startGame()
+  })
+
+  dialog.appendChild(title)
+  dialog.appendChild(message)
+  dialog.appendChild(solutionContainer)
+  dialog.appendChild(playAgainBtn)
+  overlay.appendChild(dialog)
+  document.body.appendChild(overlay)
+
+  // Fade in animation
+  setTimeout(() => {
+    overlay.classList.add('visible')
+  }, 10)
+}
+
 function startGame() {
   // Clear checked rows
   checkedRows.clear()
@@ -353,7 +419,8 @@ function startGame() {
 
   grid.fill("None")
 
-  // Build the UI
+  // Clear and rebuild the UI
+  app.innerHTML = ''
   buildApp()
 }
 
