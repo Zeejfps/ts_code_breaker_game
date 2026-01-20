@@ -324,7 +324,8 @@ function handleCheckRow(rowIndex: number, checkButton: HTMLButtonElement, feedba
 
   const isVictory = processRowCheck(rowIndex)
   if (isVictory) {
-    showVictoryDialog()
+    const guessCount = grid.height - rowIndex
+    showVictoryDialog(guessCount)
     return
   }
 
@@ -422,7 +423,7 @@ function createPlayAgainButton(overlay: HTMLElement): HTMLElement {
   return playAgainBtn
 }
 
-function createVictoryDialog(): HTMLElement {
+function createVictoryDialog(guessCount: number): HTMLElement {
   const dialog = document.createElement('div')
   dialog.className = 'victory-dialog'
 
@@ -434,17 +435,23 @@ function createVictoryDialog(): HTMLElement {
   message.textContent = 'You cracked the code!'
   message.className = 'victory-message'
 
+  const stats = document.createElement('p')
+  const guessText = guessCount === 1 ? 'guess' : 'guesses'
+  stats.textContent = `Solved in ${guessCount} ${guessText}`
+  stats.className = 'victory-stats'
+
   dialog.appendChild(title)
   dialog.appendChild(message)
+  dialog.appendChild(stats)
 
   return dialog
 }
 
-function showVictoryDialog() {
+function showVictoryDialog(guessCount: number) {
   const overlay = document.createElement('div')
   overlay.className = 'victory-overlay'
 
-  const dialog = createVictoryDialog()
+  const dialog = createVictoryDialog(guessCount)
   const solutionDisplay = createSolutionDisplay()
   const playAgainBtn = createPlayAgainButton(overlay)
 
