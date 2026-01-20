@@ -418,7 +418,7 @@ function createPlayAgainButton(overlay: HTMLElement): HTMLElement {
   playAgainBtn.className = 'play-again-button'
   playAgainBtn.addEventListener('click', () => {
     overlay.remove()
-    startGame()
+    animateClearBoard()
   })
   return playAgainBtn
 }
@@ -490,7 +490,7 @@ function createTryAgainButton(overlay: HTMLElement): HTMLElement {
   tryAgainBtn.className = 'play-again-button'
   tryAgainBtn.addEventListener('click', () => {
     overlay.remove()
-    startGame()
+    animateClearBoard()
   })
   return tryAgainBtn
 }
@@ -512,6 +512,76 @@ function showLoseDialog() {
   setTimeout(() => {
     overlay.classList.add('visible')
   }, 10)
+}
+
+function animateClearBoard() {
+  const gameBoard = document.querySelector('.game-board')
+  if (!gameBoard) {
+    startGame()
+    return
+  }
+
+  const rows = gameBoard.querySelectorAll('.row-container')
+
+  // Animate rows from top to bottom
+  rows.forEach((row, index) => {
+    setTimeout(() => {
+      row.classList.add('clearing')
+
+      // Animate only placed marbles (not empty holes) in the row
+      const marbles = row.querySelectorAll('.peg.placed')
+      marbles.forEach((marble: Element, marbleIndex) => {
+        setTimeout(() => {
+          const pegElement = marble as HTMLElement
+
+          // Get the marble's current position and color
+          const rect = pegElement.getBoundingClientRect()
+          const currentColor = pegElement.style.backgroundColor
+
+          // Create a duplicate marble for animation
+          const duplicate = document.createElement('div')
+          duplicate.className = 'peg-duplicate'
+          duplicate.style.cssText = `
+            position: fixed;
+            top: ${rect.top}px;
+            left: ${rect.left}px;
+            width: ${rect.width}px;
+            height: ${rect.height}px;
+            background-color: ${currentColor};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+          `
+
+          // Add marble styling to duplicate
+          duplicate.classList.add('filled')
+
+          document.body.appendChild(duplicate)
+
+          // Convert original to hole immediately
+          pegElement.style.backgroundColor = getHoleColor('None')
+          pegElement.classList.remove('placed')
+          pegElement.classList.add('empty')
+
+          // Animate the duplicate away
+          requestAnimationFrame(() => {
+            duplicate.classList.add('clear-out')
+
+            // Remove duplicate after animation
+            setTimeout(() => {
+              duplicate.remove()
+            }, 500)
+          })
+        }, marbleIndex * 30)
+      })
+    }, index * 80)
+  })
+
+  // Wait for all animations to complete, then start new game
+  const totalAnimationTime = (rows.length * 80) + (grid.width * 30) + 500
+  setTimeout(() => {
+    startGame()
+  }, totalAnimationTime)
 }
 
 function startGame() {
