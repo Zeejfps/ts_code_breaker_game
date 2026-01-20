@@ -7,7 +7,7 @@ import {
   setActiveRowIndex,
   availableColors,
   solution,
-  generateSolution
+  newGame
 } from './game'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
@@ -342,7 +342,7 @@ function animateRowTransition(currentRowIndex: number, nextRowIndex: number) {
   }, 200)
 }
 
-function buildApp() {
+function createApp() {
   const mainContainer = document.createElement('div')
   mainContainer.className = 'main-container'
 
@@ -407,21 +407,15 @@ function startGame() {
   // Clear checked rows
   checkedRows.clear()
 
-  // Reset active row to bottom
-  setActiveRowIndex(grid.height - 1)
-
-  // Generate solution
-  const newSolution = generateSolution()
-  solution.length = 0
-  solution.push(...newSolution)
-
-  console.log('Solution:', solution) // For debugging
-
-  grid.fill("None")
+  newGame()
 
   // Clear and rebuild the UI
+  destroyApp()
+  createApp()
+}
+
+function destroyApp() {
   app.innerHTML = ''
-  buildApp()
 }
 
 startGame()

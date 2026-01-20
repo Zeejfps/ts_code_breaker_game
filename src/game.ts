@@ -13,10 +13,26 @@ export function setActiveRowIndex(index: number) {
   activeRowIndex = index;
 }
 
-export function generateSolution(): Marble[] {
+export function generateSolution(): void {
   // Generate solution: pick grid.width random colors, each appearing once
   const shuffledColors = shuffleArray(availableColors)
-  return shuffledColors.slice(0, grid.width)
+  const newSolution = shuffledColors.slice(0, grid.width)
+
+  // Update the solution array
+  solution.length = 0
+  solution.push(...newSolution)
+}
+
+export function newGame() {
+  // Reset active row to bottom
+  setActiveRowIndex(grid.height - 1)
+
+  // Generate solution
+  generateSolution()
+
+  console.log('Solution:', solution) // For debugging
+
+  grid.fill("None")
 }
 
 function shuffleArray<T>(array: T[]): T[] {
