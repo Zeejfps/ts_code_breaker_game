@@ -157,19 +157,34 @@ body::before {
   gap: var(--gap);
   padding: calc(var(--gap) * 0.5) var(--gap);
   border-radius: var(--border-radius);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   background: transparent;
   border: 1px solid transparent;
+  position: relative;
 }
 
-.row-container.active {
+.row-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: linear-gradient(135deg,
     rgba(0, 255, 136, 0.08) 0%,
     rgba(0, 212, 255, 0.05) 100%);
-  border-color: rgba(0, 255, 136, 0.3);
   box-shadow:
     0 0 20px rgba(0, 255, 136, 0.15),
     inset 0 0 20px rgba(0, 255, 136, 0.05);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.row-container.active::before {
+  opacity: 1;
+}
+
+.row-container.active {
+  border-color: rgba(0, 255, 136, 0.3);
 }
 
 .peg-row {
@@ -182,7 +197,7 @@ body::before {
 .palette-peg {
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   position: relative;
   touch-action: manipulation;
@@ -417,7 +432,7 @@ body::before {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
     0 4px 15px rgba(0, 255, 136, 0.4),
     0 2px 4px rgba(0, 0, 0, 0.3),
@@ -815,7 +830,7 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
     0 6px 25px rgba(0, 255, 136, 0.4),
     0 2px 4px rgba(0, 0, 0, 0.3),
@@ -824,7 +839,6 @@ body::before {
 }
 
 .play-again-button:hover {
-  background: linear-gradient(180deg, #33ff9f 0%, #00ff88 50%, #00cc6a 100%);
   transform: translateY(-3px);
   box-shadow:
     0 10px 40px rgba(0, 255, 136, 0.5),
@@ -1119,7 +1133,7 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   touch-action: manipulation;
 }
 
