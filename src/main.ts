@@ -607,6 +607,22 @@ function animateClearBoard() {
     return
   }
 
+  // Disable restart button during animation
+  const restartBtn = document.querySelector('.restart-button') as HTMLButtonElement
+  if (restartBtn) {
+    restartBtn.disabled = true
+  }
+
+  // Hide active row selection and check button
+  const activeRow = gameBoard.querySelector('.row-container.active')
+  if (activeRow) {
+    activeRow.classList.remove('active')
+    const checkButton = activeRow.querySelector('.check-button')
+    if (checkButton) {
+      checkButton.classList.add('hidden')
+    }
+  }
+
   const rows = gameBoard.querySelectorAll('.row-container')
 
   // Filter to only rows that have placed marbles
@@ -675,6 +691,11 @@ function animateClearBoard() {
   // Wait for all animations to complete, then start new game
   const totalAnimationTime = (rowsWithMarbles.length * 80) + (grid.width * 30) + 500
   setTimeout(() => {
+    // Re-enable restart button
+    const restartBtn = document.querySelector('.restart-button') as HTMLButtonElement
+    if (restartBtn) {
+      restartBtn.disabled = false
+    }
     startGame()
   }, totalAnimationTime)
 }

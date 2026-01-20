@@ -914,6 +914,12 @@ body::before {
   transform: rotate(180deg) scale(0.9);
 }
 
+.restart-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Restart Dialog */
 .restart-dialog {
   border-color: rgba(255, 159, 67, 0.4);
