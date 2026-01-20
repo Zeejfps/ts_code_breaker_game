@@ -17,7 +17,7 @@
   --gap: calc(var(--base-unit) * 0.2);
   --padding: calc(var(--base-unit) * 0.3);
   --border-radius: calc(var(--base-unit) * 0.2);
-  --check-width: calc(var(--base-unit) * 2);
+  --check-width: calc(var(--base-unit) * 1.2);
 
   /* Sci-fi color palette */
   --bg-deep: #0a0e1a;
@@ -485,17 +485,35 @@ body::before {
   gap: 2px;
   width: 100%;
   height: 100%;
+  place-content: center;
 }
 
 .feedback-peg {
-  width: 100%;
+  width: calc(var(--peg-size) * 0.4);
   aspect-ratio: 1;
   border-radius: 50%;
   border: none;
   position: relative;
-  margin: auto;
-  max-width: calc(var(--peg-size) * 0.4);
-  max-height: calc(var(--peg-size) * 0.4);
+}
+
+/* Left column (1st and 3rd) - align right towards center */
+.feedback-peg:nth-child(odd) {
+  justify-self: end;
+}
+
+/* Right column (2nd and 4th) - align left towards center */
+.feedback-peg:nth-child(even) {
+  justify-self: start;
+}
+
+/* Top row (1st and 2nd) - align down towards center */
+.feedback-peg:nth-child(-n+2) {
+  align-self: end;
+}
+
+/* Bottom row (3rd and 4th) - align up towards center */
+.feedback-peg:nth-child(n+3) {
+  align-self: start;
 }
 
 /* Filled feedback pegs (glowing indicators) */

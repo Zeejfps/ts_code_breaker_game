@@ -238,7 +238,8 @@ function createFeedbackPeg(position: number, exactMatches: number, colorMatches:
 function createFeedbackGrid(exactMatches: number, colorMatches: number): HTMLElement {
   const feedbackGrid = document.createElement('div')
   feedbackGrid.className = 'feedback-grid'
-  feedbackGrid.style.gridTemplateColumns = `repeat(${grid.width}, 1fr)`
+  feedbackGrid.style.gridTemplateColumns = 'repeat(2, 1fr)'
+  feedbackGrid.style.gridTemplateRows = 'repeat(2, 1fr)'
 
   for (let i = 0; i < grid.width; i++) {
     const feedbackPeg = createFeedbackPeg(i, exactMatches, colorMatches)
