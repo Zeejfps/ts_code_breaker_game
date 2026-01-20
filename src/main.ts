@@ -604,13 +604,22 @@ function animateClearBoard() {
 
   const rows = gameBoard.querySelectorAll('.row-container')
 
-  // Animate rows from top to bottom
+  // Filter to only rows that have placed marbles
+  const rowsWithMarbles: Array<{ row: Element; originalIndex: number }> = []
   rows.forEach((row, index) => {
+    const marbles = row.querySelectorAll('.peg.placed')
+    if (marbles.length > 0) {
+      rowsWithMarbles.push({ row, originalIndex: index })
+    }
+  })
+
+  // Animate rows from top to bottom, but only those with marbles
+  rowsWithMarbles.forEach((rowData, delayIndex) => {
     setTimeout(() => {
-      row.classList.add('clearing')
+      rowData.row.classList.add('clearing')
 
       // Animate only placed marbles (not empty holes) in the row
-      const marbles = row.querySelectorAll('.peg.placed')
+      const marbles = rowData.row.querySelectorAll('.peg.placed')
       marbles.forEach((marble: Element, marbleIndex) => {
         setTimeout(() => {
           const pegElement = marble as HTMLElement
@@ -655,11 +664,11 @@ function animateClearBoard() {
           })
         }, marbleIndex * 30)
       })
-    }, index * 80)
+    }, delayIndex * 80)
   })
 
   // Wait for all animations to complete, then start new game
-  const totalAnimationTime = (rows.length * 80) + (grid.width * 30) + 500
+  const totalAnimationTime = (rowsWithMarbles.length * 80) + (grid.width * 30) + 500
   setTimeout(() => {
     startGame()
   }, totalAnimationTime)
