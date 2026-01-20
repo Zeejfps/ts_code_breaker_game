@@ -11,6 +11,9 @@ const availableColors: Marble[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'Wh
 // Track which rows have been checked
 const checkedRows = new Set<number>()
 
+// Game solution - the secret code to guess
+let solution: Marble[] = []
+
 function getHoleColor(holeState: HoleState): string {
   const colorMap: Record<HoleState, string> = {
     'None': '#3a3a3a',
@@ -181,35 +184,77 @@ function handlePegClick(x: number, y: number, pegElement: HTMLElement) {
   pegElement.classList.add('placed')
 }
 
-function renderFeedback(feedbackArea: HTMLElement, _rowIndex: number) {
+function renderFeedback(feedbackArea: HTMLElement, rowIndex: number) {
   // Clear any existing feedback
   feedbackArea.innerHTML = ''
 
-  // Create small feedback pegs (placeholder logic - you'll customize this)
+  // Get the current row's guesses
+  const guess: HoleState[] = []
+  for (let x = 0; x < grid.width; x++) {
+    guess.push(grid.get(x, rowIndex))
+  }
+
+  // Calculate feedback
+  const feedback = calculateFeedback(guess)
+
+  // Create small feedback pegs
   const feedbackGrid = document.createElement('div')
   feedbackGrid.className = 'feedback-grid'
   feedbackGrid.style.gridTemplateColumns = `repeat(${grid.width}, 1fr)`
 
-  // For now, just show random feedback as an example
-  // In a real game, this would compare against the solution
+  // Display feedback: reds first, then whites, then grays
   for (let i = 0; i < grid.width; i++) {
     const feedbackPeg = document.createElement('div')
     feedbackPeg.className = 'feedback-peg'
 
-    // Placeholder: randomly show black, white, or empty
-    const feedback = Math.random()
-    if (feedback < 0.33) {
-      feedbackPeg.style.backgroundColor = '#424242' // Black = correct position
-    } else if (feedback < 0.66) {
-      feedbackPeg.style.backgroundColor = '#ffffff' // White = correct color, wrong position
+    if (i < feedback.exactMatches) {
+      // Red = correct position
+      feedbackPeg.style.backgroundColor = '#ef5350'
+    } else if (i < feedback.exactMatches + feedback.colorMatches) {
+      // White = correct color, wrong position
+      feedbackPeg.style.backgroundColor = '#ffffff'
     } else {
-      feedbackPeg.style.backgroundColor = '#555555' // Gray = incorrect
+      // Gray = incorrect
+      feedbackPeg.style.backgroundColor = '#555555'
     }
 
     feedbackGrid.appendChild(feedbackPeg)
   }
 
   feedbackArea.appendChild(feedbackGrid)
+}
+
+function calculateFeedback(guess: HoleState[]): { exactMatches: number; colorMatches: number } {
+  let exactMatches = 0
+  let colorMatches = 0
+
+  // Track which positions in solution and guess have been matched
+  const solutionUsed = new Array(solution.length).fill(false)
+  const guessUsed = new Array(guess.length).fill(false)
+
+  // First pass: find exact matches
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] !== 'None' && guess[i] === solution[i]) {
+      exactMatches++
+      solutionUsed[i] = true
+      guessUsed[i] = true
+    }
+  }
+
+  // Second pass: find color matches (right color, wrong position)
+  for (let i = 0; i < guess.length; i++) {
+    if (guessUsed[i] || guess[i] === 'None') continue
+
+    for (let j = 0; j < solution.length; j++) {
+      if (!solutionUsed[j] && guess[i] === solution[j]) {
+        colorMatches++
+        solutionUsed[j] = true
+        break
+      }
+    }
+  }
+
+  return { exactMatches, colorMatches }
 }
 
 function handleCheckRow(rowIndex: number, checkButton: HTMLButtonElement, feedbackArea: HTMLElement) {
@@ -288,11 +333,37 @@ function buildApp() {
   app.appendChild(mainContainer)
 }
 
-// Initialize with empty grid
-for (let y = 0; y < grid.height; y++) {
-  for (let x = 0; x < grid.width; x++) {
-    grid.set(x, y, 'None')
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
+  return shuffled
 }
 
-buildApp()
+function startGame() {
+  // Clear checked rows
+  checkedRows.clear()
+
+  // Reset active row to bottom
+  setActiveRowIndex(grid.height - 1)
+
+  // Generate solution: pick grid.width random colors, each appearing once
+  const shuffledColors = shuffleArray(availableColors)
+  solution = shuffledColors.slice(0, grid.width)
+
+  console.log('Solution:', solution) // For debugging
+
+  // Initialize with empty grid
+  for (let y = 0; y < grid.height; y++) {
+    for (let x = 0; x < grid.width; x++) {
+      grid.set(x, y, 'None')
+    }
+  }
+
+  // Build the UI
+  buildApp()
+}
+
+startGame()
