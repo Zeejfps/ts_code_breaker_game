@@ -388,11 +388,30 @@ function animateRowTransition(currentRowIndex: number, nextRowIndex: number) {
   }, 200)
 }
 
+function createRestartButton(): HTMLElement {
+  const restartBtn = document.createElement('button')
+  restartBtn.innerHTML = '&#x21bb;' // Circular arrow icon
+  restartBtn.className = 'restart-button'
+  restartBtn.title = 'Restart Game'
+  restartBtn.addEventListener('click', () => {
+    showRestartDialog()
+  })
+  return restartBtn
+}
+
 function createApp() {
   const mainContainer = document.createElement('div')
   mainContainer.className = 'main-container'
 
-  buildGrid(mainContainer)
+  const gameSection = document.createElement('div')
+  gameSection.className = 'game-section'
+
+  const restartBtn = createRestartButton()
+  gameSection.appendChild(restartBtn)
+
+  buildGrid(gameSection)
+
+  mainContainer.appendChild(gameSection)
   buildPalette(mainContainer)
 
   app.appendChild(mainContainer)
@@ -505,6 +524,68 @@ function showLoseDialog() {
 
   dialog.appendChild(solutionDisplay)
   dialog.appendChild(tryAgainBtn)
+  overlay.appendChild(dialog)
+  document.body.appendChild(overlay)
+
+  // Fade in animation
+  setTimeout(() => {
+    overlay.classList.add('visible')
+  }, 10)
+}
+
+function createRestartDialog(): HTMLElement {
+  const dialog = document.createElement('div')
+  dialog.className = 'victory-dialog restart-dialog'
+
+  const title = document.createElement('h2')
+  title.textContent = '⚠️ Restart Game?'
+  title.className = 'victory-title restart-title'
+
+  const message = document.createElement('p')
+  message.textContent = 'Your current progress will be lost.'
+  message.className = 'victory-message'
+
+  dialog.appendChild(title)
+  dialog.appendChild(message)
+
+  return dialog
+}
+
+function createDialogButtons(overlay: HTMLElement, onConfirm: () => void): HTMLElement {
+  const buttonContainer = document.createElement('div')
+  buttonContainer.className = 'dialog-buttons'
+
+  const cancelBtn = document.createElement('button')
+  cancelBtn.textContent = 'Cancel'
+  cancelBtn.className = 'dialog-button cancel-button'
+  cancelBtn.addEventListener('click', () => {
+    overlay.remove()
+  })
+
+  const confirmBtn = document.createElement('button')
+  confirmBtn.textContent = 'Restart'
+  confirmBtn.className = 'dialog-button confirm-button'
+  confirmBtn.addEventListener('click', () => {
+    overlay.remove()
+    onConfirm()
+  })
+
+  buttonContainer.appendChild(cancelBtn)
+  buttonContainer.appendChild(confirmBtn)
+
+  return buttonContainer
+}
+
+function showRestartDialog() {
+  const overlay = document.createElement('div')
+  overlay.className = 'victory-overlay'
+
+  const dialog = createRestartDialog()
+  const buttons = createDialogButtons(overlay, () => {
+    animateClearBoard()
+  })
+
+  dialog.appendChild(buttons)
   overlay.appendChild(dialog)
   document.body.appendChild(overlay)
 
