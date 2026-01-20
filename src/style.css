@@ -164,8 +164,6 @@ body {
 
 .peg.inactive {
   cursor: not-allowed;
-  opacity: 0.5;
-  filter: grayscale(0.3);
   pointer-events: none;
 }
 
