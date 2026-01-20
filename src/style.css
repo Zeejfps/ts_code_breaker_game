@@ -134,19 +134,17 @@ body {
 }
 
 .peg.empty:hover {
-  transform: scale(1.05);
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.8),
+              inset -2px -2px 6px rgba(255, 255, 255, 0.03),
+              0 0 0 2px rgba(76, 175, 80, 0.4),
+              0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .peg.inactive {
   cursor: not-allowed;
   opacity: 0.5;
   filter: grayscale(0.3);
-}
-
-.peg.inactive:hover {
-  transform: none;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2),
-              0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 .check-wrapper {
