@@ -290,7 +290,8 @@ body {
 }
 
 .palette {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   padding: 16px;
   background-color: #1a1a1a;
