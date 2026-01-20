@@ -219,10 +219,12 @@ function createFeedbackPeg(position: number, exactMatches: number, colorMatches:
 
   if (position < exactMatches) {
     feedbackPeg.style.backgroundColor = '#ef5350' // Red = correct position
+    feedbackPeg.classList.add('filled')
   } else if (position < exactMatches + colorMatches) {
     feedbackPeg.style.backgroundColor = '#ffffff' // White = correct color, wrong position
+    feedbackPeg.classList.add('filled')
   } else {
-    feedbackPeg.style.backgroundColor = '#555555' // Gray = incorrect
+    feedbackPeg.classList.add('empty') // Empty hole = incorrect
   }
 
   return feedbackPeg
