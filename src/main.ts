@@ -330,6 +330,11 @@ function handleCheckRow(rowIndex: number, checkButton: HTMLButtonElement, feedba
 
   if (rowIndex > 0) {
     moveToNextRow(rowIndex)
+  } else {
+    // Last row and didn't win - show lose dialog after delay
+    setTimeout(() => {
+      showLoseDialog()
+    }, 800)
   }
 }
 
@@ -445,6 +450,54 @@ function showVictoryDialog() {
 
   dialog.appendChild(solutionDisplay)
   dialog.appendChild(playAgainBtn)
+  overlay.appendChild(dialog)
+  document.body.appendChild(overlay)
+
+  // Fade in animation
+  setTimeout(() => {
+    overlay.classList.add('visible')
+  }, 10)
+}
+
+function createLoseDialog(): HTMLElement {
+  const dialog = document.createElement('div')
+  dialog.className = 'victory-dialog lose-dialog'
+
+  const title = document.createElement('h2')
+  title.textContent = '💔 Game Over 💔'
+  title.className = 'victory-title lose-title'
+
+  const message = document.createElement('p')
+  message.textContent = 'Out of guesses! The solution was:'
+  message.className = 'victory-message'
+
+  dialog.appendChild(title)
+  dialog.appendChild(message)
+
+  return dialog
+}
+
+function createTryAgainButton(overlay: HTMLElement): HTMLElement {
+  const tryAgainBtn = document.createElement('button')
+  tryAgainBtn.textContent = 'Try Again'
+  tryAgainBtn.className = 'play-again-button'
+  tryAgainBtn.addEventListener('click', () => {
+    overlay.remove()
+    startGame()
+  })
+  return tryAgainBtn
+}
+
+function showLoseDialog() {
+  const overlay = document.createElement('div')
+  overlay.className = 'victory-overlay'
+
+  const dialog = createLoseDialog()
+  const solutionDisplay = createSolutionDisplay()
+  const tryAgainBtn = createTryAgainButton(overlay)
+
+  dialog.appendChild(solutionDisplay)
+  dialog.appendChild(tryAgainBtn)
   overlay.appendChild(dialog)
   document.body.appendChild(overlay)
 
