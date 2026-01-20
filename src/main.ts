@@ -1,18 +1,22 @@
 import './style.css'
-import { grid, type HoleState, type Marble, activeRowIndex, setActiveRowIndex } from './game'
+import {
+  grid,
+  type HoleState,
+  type Marble,
+  activeRowIndex,
+  setActiveRowIndex,
+  availableColors,
+  solution,
+  generateSolution
+} from './game'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
 // Track selected color
 let selectedColor: Marble = 'Red'
 
-const availableColors: Marble[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple']
-
 // Track which rows have been checked
 const checkedRows = new Set<number>()
-
-// Game solution - the secret code to guess
-let solution: Marble[] = []
 
 function getHoleColor(holeState: HoleState): string {
   const colorMap: Record<HoleState, string> = {
@@ -333,15 +337,6 @@ function buildApp() {
   app.appendChild(mainContainer)
 }
 
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  return shuffled
-}
-
 function startGame() {
   // Clear checked rows
   checkedRows.clear()
@@ -349,9 +344,10 @@ function startGame() {
   // Reset active row to bottom
   setActiveRowIndex(grid.height - 1)
 
-  // Generate solution: pick grid.width random colors, each appearing once
-  const shuffledColors = shuffleArray(availableColors)
-  solution = shuffledColors.slice(0, grid.width)
+  // Generate solution
+  const newSolution = generateSolution()
+  solution.length = 0
+  solution.push(...newSolution)
 
   console.log('Solution:', solution) // For debugging
 
