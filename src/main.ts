@@ -355,12 +355,7 @@ function startGame() {
 
   console.log('Solution:', solution) // For debugging
 
-  // Initialize with empty grid
-  for (let y = 0; y < grid.height; y++) {
-    for (let x = 0; x < grid.width; x++) {
-      grid.set(x, y, 'None')
-    }
-  }
+  grid.fill("None")
 
   // Build the UI
   buildApp()

@@ -4,6 +4,7 @@ export interface Grid<T> {
     height: number;
     get(x: number, y: number): T;
     set(x: number, y: number, value: T): void;
+    fill(value: T): void;
     iterateTopToBottom(): IterableIterator<IterableIterator<T>>;
     iterateRow(rowIndex: number): IterableIterator<T>;
 }
@@ -34,6 +35,12 @@ export class ArrayGrid<T> implements Grid<T> {
 
     public set(x: number, y: number, value: T) {
         this._data[x + y * this._width] = value;
+    }
+
+    public fill(value: T) {
+        for (let i = 0; i < this._data.length; i++) {
+            this._data[i] = value;
+        }
     }
 
     public* iterateTopToBottom(): IterableIterator<IterableIterator<T>> {
