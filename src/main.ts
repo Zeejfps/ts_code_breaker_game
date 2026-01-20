@@ -45,6 +45,9 @@ function buildPalette(container: HTMLElement) {
   const palette = document.createElement('div')
   palette.className = 'palette'
 
+  const paletteInner = document.createElement('div')
+  paletteInner.className = 'palette-inner'
+
   availableColors.forEach(color => {
     const palettePeg = document.createElement('div')
     palettePeg.className = 'palette-peg'
@@ -57,8 +60,10 @@ function buildPalette(container: HTMLElement) {
       handlePaletteClick(color)
     })
 
-    palette.appendChild(palettePeg)
+    paletteInner.appendChild(palettePeg)
   })
+
+  palette.appendChild(paletteInner)
 
   paletteContainer.appendChild(palette)
   container.appendChild(paletteContainer)
