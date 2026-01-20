@@ -21,13 +21,13 @@ const checkedRows = new Set<number>()
 function getHoleColor(holeState: HoleState): string {
   const colorMap: Record<HoleState, string> = {
     'None': '#3a3a3a',
-    'Red': '#ef5350',
+    'Red': '#e60000',
     'Blue': '#42a5f5',
     'Yellow': '#ffeb3b',
     'Green': '#66bb6a',
-    'Pink': '#ec407a',
+    'Pink': '#ff1493',
     'White': '#ffffff',
-    'Black': '#424242',
+    'Black': '#0a0a0a',
     'Purple': '#ab47bc'
   }
   return colorMap[holeState]
