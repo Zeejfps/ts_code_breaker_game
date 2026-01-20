@@ -12,6 +12,39 @@ import {
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
+// Scaling function to fit game within viewport
+function scaleGame() {
+  const mainContainer = document.querySelector('.main-container') as HTMLElement
+  if (!mainContainer) return
+
+  // Reset scale to measure natural size
+  mainContainer.style.transform = 'scale(1)'
+
+  const padding = 20 // padding around the game
+  const availableWidth = window.innerWidth - (padding * 2)
+  const availableHeight = window.innerHeight - (padding * 2)
+
+  const naturalWidth = mainContainer.offsetWidth
+  const naturalHeight = mainContainer.offsetHeight
+
+  const scaleX = availableWidth / naturalWidth
+  const scaleY = availableHeight / naturalHeight
+
+  // Use the smaller scale to ensure it fits in both dimensions
+  const scale = Math.min(scaleX, scaleY, 1) // Cap at 1 to prevent scaling up
+
+  mainContainer.style.transform = `scale(${scale})`
+}
+
+// Debounced resize handler
+let resizeTimeout: number
+function handleResize() {
+  clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(scaleGame, 100)
+}
+
+window.addEventListener('resize', handleResize)
+
 // Track selected color
 let selectedColor: Marble = 'Red'
 
@@ -497,6 +530,9 @@ function createApp() {
   buildPalette(mainContainer)
 
   app.appendChild(mainContainer)
+
+  // Scale game to fit viewport after DOM is ready
+  requestAnimationFrame(scaleGame)
 }
 
 function createSolutionDisplay(): HTMLElement {
