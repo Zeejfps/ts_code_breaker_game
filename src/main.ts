@@ -28,7 +28,7 @@ function getHoleColor(holeState: HoleState): string {
     'Pink': '#ff1493',
     'White': '#ffffff',
     'Black': '#0a0a0a',
-    'Purple': '#ab47bc'
+    'Purple': '#9c27b0'
   }
   return colorMap[holeState]
 }
