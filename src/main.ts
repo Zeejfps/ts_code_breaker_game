@@ -1,5 +1,5 @@
 import './style.css'
-import { grid, type Peg } from './game'
+import { grid, type Peg, activeRowIndex, setActiveRowIndex } from './game'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -7,6 +7,9 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 let selectedColor: Peg = 'Red'
 
 const availableColors: Peg[] = ['Red', 'Blue', 'Yellow', 'Green', 'Pink', 'White', 'Black', 'Purple']
+
+// Track which rows have been checked
+const checkedRows = new Set<number>()
 
 function getPegColor(peg: Peg): string {
   const colorMap: Record<Peg, string> = {
@@ -38,13 +41,13 @@ function renderPalette(container: HTMLElement) {
   availableColors.forEach(color => {
     const palettePeg = document.createElement('div')
     palettePeg.className = 'palette-peg'
+    palettePeg.dataset.color = color
     if (color === selectedColor) {
       palettePeg.classList.add('selected')
     }
     palettePeg.style.backgroundColor = getPegColor(color)
     palettePeg.addEventListener('click', () => {
-      selectedColor = color
-      renderApp()
+      handlePaletteClick(color)
     })
 
     palette.appendChild(palettePeg)
@@ -54,6 +57,26 @@ function renderPalette(container: HTMLElement) {
   container.appendChild(paletteContainer)
 }
 
+function handlePaletteClick(color: Peg) {
+  // Update selected color
+  const previousColor = selectedColor
+  selectedColor = color
+
+  // Update palette pegs visual state
+  const palette = document.querySelector('.palette')
+  if (palette) {
+    const prevPeg = palette.querySelector(`[data-color="${previousColor}"]`)
+    const newPeg = palette.querySelector(`[data-color="${color}"]`)
+
+    if (prevPeg) {
+      prevPeg.classList.remove('selected')
+    }
+    if (newPeg) {
+      newPeg.classList.add('selected')
+    }
+  }
+}
+
 function renderGrid(container: HTMLElement) {
   const gameBoard = document.createElement('div')
   gameBoard.className = 'game-board'
@@ -61,6 +84,11 @@ function renderGrid(container: HTMLElement) {
   for (let y = 0; y < grid.height; y++) {
     const rowContainer = document.createElement('div')
     rowContainer.className = 'row-container'
+
+    // Highlight active row
+    if (y === activeRowIndex) {
+      rowContainer.classList.add('active')
+    }
 
     // Create peg row
     const pegRow = document.createElement('div')
@@ -80,23 +108,20 @@ function renderGrid(container: HTMLElement) {
         pegElement.classList.add('empty')
       }
 
+      // Add inactive class if not in active row
+      if (y !== activeRowIndex) {
+        pegElement.classList.add('inactive')
+      }
+
       // Add click handler for interactivity
       pegElement.addEventListener('click', () => {
-        handlePegClick(x, y)
+        handlePegClick(x, y, pegElement)
       })
 
       pegRow.appendChild(pegElement)
     }
 
-    // Create check button
-    const checkButton = document.createElement('button')
-    checkButton.className = 'check-button'
-    checkButton.textContent = 'Check'
-    checkButton.addEventListener('click', () => {
-      handleCheckRow(y, checkButton, feedbackArea)
-    })
-
-    // Create feedback area (initially hidden)
+    // Create feedback area
     const feedbackArea = document.createElement('div')
     feedbackArea.className = 'feedback-area'
     feedbackArea.dataset.row = String(y)
@@ -104,7 +129,26 @@ function renderGrid(container: HTMLElement) {
     // Wrapper to contain both button and feedback in same space
     const checkWrapper = document.createElement('div')
     checkWrapper.className = 'check-wrapper'
-    checkWrapper.appendChild(checkButton)
+
+    const isChecked = checkedRows.has(y)
+
+    // Only show check button for active row if not already checked
+    if (y === activeRowIndex && !isChecked) {
+      const checkButton = document.createElement('button')
+      checkButton.className = 'check-button'
+      checkButton.textContent = 'Check'
+      checkButton.addEventListener('click', () => {
+        handleCheckRow(y, checkButton, feedbackArea)
+      })
+      checkWrapper.appendChild(checkButton)
+    }
+
+    // Show feedback if row has been checked
+    if (isChecked) {
+      renderFeedback(feedbackArea, y)
+      feedbackArea.classList.add('visible')
+    }
+
     checkWrapper.appendChild(feedbackArea)
 
     rowContainer.appendChild(pegRow)
@@ -116,15 +160,25 @@ function renderGrid(container: HTMLElement) {
   container.appendChild(gameBoard)
 }
 
-function handlePegClick(x: number, y: number) {
+function handlePegClick(x: number, y: number, pegElement: HTMLElement) {
+  // Only allow clicking pegs in the active row
+  if (y !== activeRowIndex) {
+    return
+  }
+
+  // Update grid state
   grid.set(x, y, selectedColor)
-  renderApp()
+
+  // Update DOM directly
+  pegElement.style.backgroundColor = getPegColor(selectedColor)
+
+  // Remove empty class if it was empty
+  if (pegElement.classList.contains('empty')) {
+    pegElement.classList.remove('empty')
+  }
 }
 
-function handleCheckRow(_rowIndex: number, checkButton: HTMLButtonElement, feedbackArea: HTMLElement) {
-  // Hide the button
-  checkButton.classList.add('hidden')
-
+function renderFeedback(feedbackArea: HTMLElement, _rowIndex: number) {
   // Clear any existing feedback
   feedbackArea.innerHTML = ''
 
@@ -153,12 +207,75 @@ function handleCheckRow(_rowIndex: number, checkButton: HTMLButtonElement, feedb
   }
 
   feedbackArea.appendChild(feedbackGrid)
+}
+
+function handleCheckRow(rowIndex: number, checkButton: HTMLButtonElement, feedbackArea: HTMLElement) {
+  // Mark row as checked
+  checkedRows.add(rowIndex)
+
+  // Hide the button with transition
+  checkButton.classList.add('hidden')
+
+  // Render the feedback
+  renderFeedback(feedbackArea, rowIndex)
   feedbackArea.classList.add('visible')
+
+  // Move to the next row (going upward, from bottom to top)
+  if (rowIndex > 0) {
+    const nextRowIndex = rowIndex - 1
+    setActiveRowIndex(nextRowIndex)
+
+    // Animate the transition
+    animateRowTransition(rowIndex, nextRowIndex)
+  }
+}
+
+function animateRowTransition(currentRowIndex: number, nextRowIndex: number) {
+  const gameBoard = document.querySelector('.game-board')
+  if (!gameBoard) return
+
+  const rowContainers = gameBoard.querySelectorAll('.row-container')
+
+  // Deactivate current row
+  const currentRow = rowContainers[currentRowIndex] as HTMLElement
+  if (currentRow) {
+    currentRow.classList.remove('active')
+
+    // Mark all pegs in current row as inactive
+    const pegs = currentRow.querySelectorAll('.peg')
+    pegs.forEach(peg => peg.classList.add('inactive'))
+  }
+
+  // Activate next row with a slight delay for animation effect
+  setTimeout(() => {
+    const nextRow = rowContainers[nextRowIndex] as HTMLElement
+    if (nextRow) {
+      nextRow.classList.add('active')
+
+      // Mark all pegs in next row as active
+      const pegs = nextRow.querySelectorAll('.peg')
+      pegs.forEach(peg => peg.classList.remove('inactive'))
+
+      // Add the check button to the next row
+      const checkWrapper = nextRow.querySelector('.check-wrapper')
+      if (checkWrapper && !checkedRows.has(nextRowIndex)) {
+        const checkButton = document.createElement('button')
+        checkButton.className = 'check-button'
+        checkButton.textContent = 'Check'
+
+        const feedbackArea = checkWrapper.querySelector('.feedback-area') as HTMLElement
+        checkButton.addEventListener('click', () => {
+          handleCheckRow(nextRowIndex, checkButton, feedbackArea)
+        })
+
+        // Insert button before feedback area
+        checkWrapper.insertBefore(checkButton, feedbackArea)
+      }
+    }
+  }, 200)
 }
 
 function renderApp() {
-  app.innerHTML = ''
-
   const mainContainer = document.createElement('div')
   mainContainer.className = 'main-container'
 
