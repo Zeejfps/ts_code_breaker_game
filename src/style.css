@@ -37,7 +37,7 @@
   --color-yellow: radial-gradient(circle at 30% 30%, #ffec99 0%, #ffd43b 40%, #e67700 100%);
   --color-white: radial-gradient(circle at 30% 30%, #ffffff 0%, #e9ecef 40%, #adb5bd 100%);
   --color-black: radial-gradient(circle at 30% 30%, #495057 0%, #212529 40%, #0a0a0a 100%);
-  --color-purple: radial-gradient(circle at 30% 30%, #da77f2 0%, #be4bdb 40%, #7b2cbf 100%);
+  --color-purple: radial-gradient(circle at 30% 30%, #b366e0 0%, #8b2fc9 40%, #5a189a 100%);
   --color-pink: radial-gradient(circle at 30% 30%, #faa2c1 0%, #f06595 40%, #c2255c 100%);
 
   /* Glow colors for marbles */
@@ -47,7 +47,7 @@
   --glow-yellow: rgba(255, 212, 59, 0.6);
   --glow-white: rgba(255, 255, 255, 0.5);
   --glow-black: rgba(33, 37, 41, 0.4);
-  --glow-purple: rgba(190, 75, 219, 0.6);
+  --glow-purple: rgba(139, 47, 201, 0.6);
   --glow-pink: rgba(240, 101, 149, 0.6);
 }
 
