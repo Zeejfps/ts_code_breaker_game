@@ -37,13 +37,13 @@ function buildPalette(container: HTMLElement) {
   const paletteContainer = document.createElement('div')
   paletteContainer.className = 'palette-container'
 
-  const paletteTitle = document.createElement('div')
-  paletteTitle.className = 'palette-title'
-  paletteTitle.textContent = 'Select Color:'
-  paletteContainer.appendChild(paletteTitle)
-
   const palette = document.createElement('div')
   palette.className = 'palette'
+
+  const paletteTitle = document.createElement('div')
+  paletteTitle.className = 'palette-title'
+  paletteTitle.textContent = 'Select Color'
+  palette.appendChild(paletteTitle)
 
   const paletteInner = document.createElement('div')
   paletteInner.className = 'palette-inner'

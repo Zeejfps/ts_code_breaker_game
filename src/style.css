@@ -542,13 +542,18 @@ body::before {
 }
 
 .palette-title {
-  font-size: calc(var(--base-unit) * 0.28);
+  font-size: calc(var(--base-unit) * 0.26);
   font-weight: 600;
   color: var(--accent-cyan);
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 10px var(--neon-glow);
+  padding: 0 0 calc(var(--padding) * 0.6) 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  line-height: 1;
 }
 
 .palette {
