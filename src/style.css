@@ -857,7 +857,7 @@ body::before {
   font-size: calc(var(--base-unit) * 0.5);
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
     0 4px 15px rgba(255, 127, 80, 0.4),
     0 2px 4px rgba(0, 0, 0, 0.3),
@@ -870,20 +870,34 @@ body::before {
   align-self: flex-start;
 }
 
+.restart-button span,
+.restart-button::before {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .restart-button:hover {
   background: linear-gradient(180deg, #ffb366 0%, #ff9f43 50%, #ff7f50 100%);
-  transform: scale(1.1) rotate(180deg);
   box-shadow:
     0 6px 25px rgba(255, 127, 80, 0.5),
     0 4px 8px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
+.restart-button:hover span,
+.restart-button:hover::before {
+  transform: rotate(180deg);
+}
+
 .restart-button:active {
-  transform: scale(0.95) rotate(180deg);
   box-shadow:
     0 2px 10px rgba(255, 127, 80, 0.4),
     0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.restart-button:active span,
+.restart-button:active::before {
+  transform: rotate(180deg) scale(0.9);
 }
 
 /* Restart Dialog */
@@ -984,11 +998,9 @@ body::before {
       0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
-  .restart-button:hover {
-    box-shadow:
-      0 4px 15px rgba(255, 127, 80, 0.4),
-      0 2px 4px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  .restart-button:hover span,
+  .restart-button:hover::before {
+    transform: none;
   }
 
   .palette-peg.selected {

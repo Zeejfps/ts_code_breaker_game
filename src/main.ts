@@ -390,7 +390,7 @@ function animateRowTransition(currentRowIndex: number, nextRowIndex: number) {
 
 function createRestartButton(): HTMLElement {
   const restartBtn = document.createElement('button')
-  restartBtn.innerHTML = '&#x21bb;' // Circular arrow icon
+  restartBtn.innerHTML = '<span>&#x21bb;</span>' // Circular arrow icon
   restartBtn.className = 'restart-button'
   restartBtn.title = 'Restart Game'
   restartBtn.addEventListener('click', () => {
