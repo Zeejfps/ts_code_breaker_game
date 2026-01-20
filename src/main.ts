@@ -404,6 +404,82 @@ function createRestartButton(): HTMLElement {
   return restartBtn
 }
 
+function createHelpButton(): HTMLElement {
+  const helpBtn = document.createElement('button')
+  helpBtn.innerHTML = '<span>?</span>'
+  helpBtn.className = 'help-button'
+  helpBtn.title = 'How to Play'
+  helpBtn.addEventListener('click', () => {
+    showHelpDialog()
+  })
+  return helpBtn
+}
+
+function createToolbar(): HTMLElement {
+  const toolbar = document.createElement('div')
+  toolbar.className = 'toolbar'
+
+  const restartBtn = createRestartButton()
+  const helpBtn = createHelpButton()
+
+  toolbar.appendChild(restartBtn)
+  toolbar.appendChild(helpBtn)
+
+  return toolbar
+}
+
+function showHelpDialog() {
+  const overlay = document.createElement('div')
+  overlay.className = 'victory-overlay'
+
+  const dialog = document.createElement('div')
+  dialog.className = 'victory-dialog help-dialog'
+
+  const title = document.createElement('h2')
+  title.className = 'victory-title help-title'
+  title.textContent = 'How to Play'
+
+  const content = document.createElement('div')
+  content.className = 'help-content'
+  content.innerHTML = `
+    <p><strong>Objective:</strong> Crack the secret ${grid.width}-color code in ${grid.height} guesses or fewer.</p>
+    <div class="help-section">
+      <h3>Playing</h3>
+      <ul>
+        <li>Select a color from the palette below</li>
+        <li>Click an empty slot to place it</li>
+        <li>Fill all slots, then press <span class="help-check">CHECK</span></li>
+      </ul>
+    </div>
+    <div class="help-section">
+      <h3>Feedback</h3>
+      <ul>
+        <li><span class="help-peg help-peg-correct"></span> = Correct color & position</li>
+        <li><span class="help-peg help-peg-wrong"></span> = Correct color, wrong position</li>
+        <li><span class="help-peg help-peg-empty"></span> = Color not in code</li>
+      </ul>
+    </div>
+  `
+
+  const closeBtn = document.createElement('button')
+  closeBtn.className = 'play-again-button'
+  closeBtn.textContent = 'Got it!'
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.remove('visible')
+    setTimeout(() => overlay.remove(), 300)
+  })
+
+  dialog.appendChild(title)
+  dialog.appendChild(content)
+  dialog.appendChild(closeBtn)
+  overlay.appendChild(dialog)
+  document.body.appendChild(overlay)
+
+  requestAnimationFrame(() => {
+    overlay.classList.add('visible')
+  })
+}
+
 function createApp() {
   const mainContainer = document.createElement('div')
   mainContainer.className = 'main-container'
@@ -411,8 +487,8 @@ function createApp() {
   const gameSection = document.createElement('div')
   gameSection.className = 'game-section'
 
-  const restartBtn = createRestartButton()
-  gameSection.appendChild(restartBtn)
+  const toolbar = createToolbar()
+  gameSection.appendChild(toolbar)
 
   buildGrid(gameSection)
 
